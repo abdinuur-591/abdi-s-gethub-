@@ -1,10 +1,11 @@
 const { createClient } = require("@supabase/supabase-js");
 
-// SUPABASE_SERVICE_KEY is the "service_role" secret key — server-side only,
-// never send this to the browser. Set both in Vercel's Environment Variables.
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
+// Defensive cleanup: a trailing slash or stray whitespace/newline copied from
+// Supabase's dashboard into Vercel's env var box is the #1 cause of
+// "Invalid path specified in request URL" errors on every request.
+const SUPABASE_URL = (process.env.SUPABASE_URL || "").trim().replace(/\/+$/, "");
+const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_KEY || "").trim();
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 module.exports = { supabase };
