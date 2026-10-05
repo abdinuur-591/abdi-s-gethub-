@@ -19,48 +19,91 @@
 *{box-sizing:border-box}
 html{color-scheme:light}
 body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
-h1,h2,h3{margin:0;font-weight:800}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.01em}
 button{font-family:inherit;cursor:pointer}
 input,select{font-family:inherit;background:#fff;color:var(--ink)}
-nav{display:flex;align-items:center;gap:4px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;overflow-x:auto}
+nav{display:flex;align-items:center;gap:4px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;overflow-x:auto;z-index:20}
 nav .brand{font-size:16.5px;font-weight:800;color:var(--navy-dark);margin-right:18px;white-space:nowrap}
 nav .brand span{color:#6C93B8}
-nav button{display:flex;gap:7px;white-space:nowrap;background:none;border:none;color:var(--ink-soft);padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600}
-nav button.active{background:var(--navy-tint);color:var(--navy-dark)}
+nav button.navbtn{display:flex;gap:7px;white-space:nowrap;background:none;border:none;color:var(--ink-soft);padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600}
+nav button.navbtn.active{background:var(--navy-tint);color:var(--navy-dark)}
 main{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
 .topline{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;gap:12px;flex-wrap:wrap}
+.topline p{color:var(--ink-soft);font-size:13.5px;margin:5px 0 0}
 .btn{background:var(--navy);color:#fff;border:none;padding:10px 17px;border-radius:9px;font-size:13.5px;font-weight:700}
+.btn:hover{background:var(--navy-dark)}
 .btn.ghost{background:none;border:1px solid var(--border);color:var(--ink)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 1px 2px rgba(20,30,45,.04)}
 .driver-card{display:flex;align-items:center;gap:12px;padding:13px 15px}
-.avatar{width:44px;height:44px;border-radius:50%;flex:0 0 44px;background:var(--navy-tint);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--navy)}
+.avatar{width:44px;height:44px;border-radius:50%;flex:0 0 44px;object-fit:cover;background:var(--navy-tint);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--navy);font-size:14px}
 .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:6px;cursor:pointer}
 .tag.assigned{background:var(--amber-bg);color:var(--amber)}
 .tag.available{background:var(--green-bg);color:var(--green)}
 .tag.off{background:var(--red-bg);color:var(--red)}
 .dropzone{border:2px dashed #C9D2DD;border-radius:14px;padding:44px 20px;text-align:center;background:var(--surface);cursor:pointer}
-.extracted{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:18px}
-.extracted .row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #F0F2F5;font-size:13.5px}
-.extracted .row b{color:var(--ink-soft);font-weight:600}
+.dropzone:hover{border-color:var(--navy)}
+
+/* Load card redesign */
+.load-card{padding:18px 20px;display:grid;grid-template-columns:auto 1fr auto auto;gap:22px;align-items:center}
+.load-card .idcol{min-width:110px}
+.load-card .idcol .loadnum{font-weight:800;font-size:15px}
+.load-card .idcol .drv{color:var(--ink-soft);font-size:12px;margin-top:3px}
+.route-line{display:flex;align-items:center;gap:10px}
+.route-pt{font-size:13.5px}
+.route-pt b{display:block;font-weight:700;font-size:14px}
+.route-pt small{color:var(--ink-faint);font-size:11.5px}
+.route-arrow{color:var(--navy);font-size:15px;flex:0 0 auto}
+.times-col{font-size:12px;color:var(--ink-soft);line-height:1.6;min-width:140px}
+.times-col b{color:var(--ink);font-weight:700}
+.broker-col{text-align:right;min-width:150px}
+.broker-col b{display:block;color:var(--ink);font-weight:700;font-size:13px}
+.broker-col span{font-size:12px;color:var(--ink-soft)}
 .missing{color:var(--ink-faint);font-style:italic}
+.pdf-link{font-size:12px;font-weight:700;color:#fff;background:var(--navy);text-decoration:none;padding:6px 10px;border-radius:7px;display:inline-block;margin-top:6px;border:none}
+
+.extracted{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-top:18px;box-shadow:0 1px 3px rgba(20,30,45,.06)}
+.extracted-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;padding-bottom:14px;border-bottom:2px solid var(--navy-tint)}
+.extracted-header h3{font-size:16px}
+.extracted-header .rate{font-size:20px;font-weight:800;color:var(--navy)}
+.erow{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #F0F2F5;font-size:13.5px}
+.erow b{color:var(--ink-soft);font-weight:600}
+.erow span{text-align:right}
 .note{background:var(--amber-bg);color:var(--amber);border-radius:9px;padding:10px 12px;font-size:12.5px;margin-top:10px}
-.load-card{padding:15px 17px;display:grid;grid-template-columns:1.1fr 1.4fr 1.1fr 1fr auto;gap:14px;align-items:center}
-.stack{display:flex;flex-direction:column;gap:10px}
-.empty{color:var(--ink-soft);padding:50px 0;text-align:center}
+
+/* Driver modal */
+.overlay{position:fixed;inset:0;background:rgba(15,22,32,.45);display:flex;justify-content:flex-end;z-index:50}
+.panel{width:min(420px,92vw);background:#fff;height:100%;padding:26px;overflow-y:auto;box-shadow:-10px 0 28px rgba(0,0,0,.1)}
+.panel h2{font-size:17px;margin-bottom:18px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:5px}
 .field input{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-size:14px}
+.upload{border:1.5px dashed #CBD3DD;border-radius:9px;padding:14px;text-align:center;font-size:13px;color:var(--ink-soft);cursor:pointer}
+.upload img{max-width:100%;max-height:100px;border-radius:7px;margin-top:8px}
+.panel-actions{display:flex;gap:8px;margin-top:20px}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.chip{border:1px solid var(--border);background:var(--surface);padding:7px 13px;border-radius:20px;font-size:12.5px;font-weight:600;color:var(--ink-soft)}
+.chip.active{background:var(--navy-tint);color:var(--navy-dark);border-color:var(--navy-tint)}
+.search{padding:9px 13px;border:1px solid var(--border);border-radius:9px;font-size:13.5px;min-width:170px}
+.group h4{font-size:13.5px;margin-bottom:8px;color:var(--ink-soft)}
+.stack{display:flex;flex-direction:column;gap:10px}
+.empty{color:var(--ink-soft);padding:50px 0;text-align:center}
 .spin{width:16px;height:16px;border:2px solid #C7D4E3;border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;vertical-align:-3px}
 @keyframes sp{to{transform:rotate(360deg)}}
-.pdf-link{font-size:12px;font-weight:700;color:var(--navy);text-decoration:none}
-@media(max-width:760px){ main{padding:18px 14px 50px} .load-card{grid-template-columns:1fr 1fr;row-gap:10px} .grid{grid-template-columns:1fr} }
+@media(max-width:760px){
+  main{padding:18px 14px 50px}
+  .load-card{grid-template-columns:1fr;gap:10px;text-align:left}
+  .broker-col{text-align:left}
+  .grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-const state = { view:'drivers', drivers:[], loads:[], extracting:false, extracted:null, pdfFile:null, pdfName:null };
+const state = { view:'drivers', drivers:[], loads:[], extracting:false, extracted:null, pdfFile:null, pdfName:null,
+  driverPanelOpen:false, billFilter:'month', billFrom:'', billTo:'', billSearch:'' };
 function el(h){ const d=document.createElement('div'); d.innerHTML=h.trim(); return d.firstChild; }
 function fmtDate(iso){ return iso ? String(iso).replace(/^\d{4}-/,'') : iso; }
 function todayStr(){ return new Date().toLocaleDateString('en-CA'); }
@@ -91,29 +134,32 @@ function driverStatus(d){
 
 function render(){
   const app=document.getElementById('app'); app.innerHTML='';
-  const items=[['drivers','👤','Drivers'],['rateconf','📄','Rate Conf.'],['board','🚚','Load Board']];
+  const items=[['drivers','👤','Drivers'],['rateconf','📄','Rate Conf.'],['board','🚚','Load Board'],['billing','💳','Billing']];
   app.appendChild(el(`<div>
     <nav><div class="brand">Dispatch<span>Hub</span></div>
-    ${items.map(([v,ic,l])=>`<button data-v="${v}" class="${state.view===v?'active':''}">${ic} ${l}</button>`).join('')}
+    ${items.map(([v,ic,l])=>`<button class="navbtn ${state.view===v?'active':''}" data-v="${v}">${ic} ${l}</button>`).join('')}
     </nav><main id="main"></main></div>`));
-  document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{state.view=b.dataset.v; render();});
+  document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{state.view=b.dataset.v; render();});
   const main=document.getElementById('main');
   if(state.view==='drivers') main.appendChild(renderDrivers());
   if(state.view==='rateconf') main.appendChild(renderRateConf());
   if(state.view==='board') main.appendChild(renderBoard());
+  if(state.view==='billing') main.appendChild(renderBilling());
+  if(state.driverPanelOpen) document.body.appendChild(renderDriverPanel());
 }
 
 function renderDrivers(){
-  const wrap=el(`<div><div class="topline"><div><h1>Drivers</h1></div>
+  const wrap=el(`<div><div class="topline"><div><h1>Drivers</h1><p>${state.drivers.length} on file</p></div>
     <button class="btn" id="add-driver">+ New Driver</button></div>
     <div class="grid" id="grid"></div></div>`);
   const grid=wrap.querySelector('#grid');
+  if(state.drivers.length===0) grid.appendChild(el(`<div class="empty">No drivers yet — add your first one.</div>`));
   const sorted=[...state.drivers].sort((a,b)=>(a.off?1:(activeLoadFor(a.id)?2:0))-(b.off?1:(activeLoadFor(b.id)?2:0)));
   sorted.forEach(d=>{
     const st=driverStatus(d);
     grid.appendChild(el(`<div class="card driver-card" data-id="${d.id}">
-      <div class="avatar">${initials(d.name)}</div>
-      <div><h3>${d.unit?d.unit+' · ':''}${d.name||'Unnamed'}</h3>
+      ${d.truck_photo_url?`<img class="avatar" src="${d.truck_photo_url}">`:`<div class="avatar">${initials(d.name)}</div>`}
+      <div><h3 style="font-size:14.5px">${d.unit?d.unit+' · ':''}${d.name||'Unnamed'}</h3>
       <div style="color:var(--ink-soft);font-size:12.5px">${d.phone||'—'} · Truck ${d.truck_num||'—'}</div>
       <span class="tag ${st.cls}" style="cursor:pointer">${st.label}</span></div></div>`));
   });
@@ -123,13 +169,63 @@ function renderDrivers(){
     await api('drivers',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,off:!d.off})});
     await boot();
   });
-  wrap.querySelector('#add-driver').onclick=async()=>{
-    const name=prompt('Driver name:'); if(!name) return;
-    const phone=prompt('Phone:')||''; const truck_num=prompt('Truck #:')||''; const unit=prompt('Unit (e.g. T56):')||'';
-    await api('drivers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,truck_num,unit,off:false})});
+  wrap.querySelector('#add-driver').onclick=()=>{state.driverPanelOpen=true; render();};
+  return wrap;
+}
+
+function renderDriverPanel(){
+  const overlay=el(`<div class="overlay"><div class="panel">
+    <h2>Add driver</h2>
+    <div class="field"><label>Unit (e.g. T56)</label><input type="text" id="f-unit"></div>
+    <div class="field"><label>Driver name</label><input type="text" id="f-name"></div>
+    <div class="field"><label>Phone number</label><input type="text" id="f-phone"></div>
+    <div class="field"><label>Truck number</label><input type="text" id="f-truck"></div>
+    <div class="field"><label>CDL photo (optional)</label>
+      <div class="upload" id="cdl-drop">Tap to upload CDL<input type="file" accept="image/*" id="cdl-input" style="display:none"></div></div>
+    <div class="field"><label>Truck photo (optional)</label>
+      <div class="upload" id="truck-drop">Tap to upload truck photo<input type="file" accept="image/*" id="truck-input" style="display:none"></div></div>
+    <div class="panel-actions">
+      <button class="btn" id="save-driver">Save driver</button>
+      <button class="btn ghost" id="cancel-driver">Cancel</button>
+    </div>
+  </div></div>`);
+  let cdlUrl=null, truckUrl=null;
+  const wireUpload=(dropId,inputId,setter)=>{
+    const drop=overlay.querySelector(dropId), input=overlay.querySelector(inputId);
+    drop.onclick=()=>input.click();
+    input.onchange=async()=>{
+      const file=input.files[0]; if(!file) return;
+      drop.innerHTML='Uploading…';
+      try{
+        const base64=await fileToBase64(file);
+        const up=await api('upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:file.name,base64,contentType:file.type})});
+        if(up.error) throw new Error(up.error);
+        setter(up.url); drop.innerHTML=`<img src="${up.url}">`;
+      }catch(e){ drop.innerHTML='Upload failed — tap to retry ('+e.message+')'; }
+    };
+  };
+  wireUpload('#cdl-drop','#cdl-input', u=>cdlUrl=u);
+  wireUpload('#truck-drop','#truck-input', u=>truckUrl=u);
+  overlay.querySelector('#cancel-driver').onclick=()=>{state.driverPanelOpen=false; render();};
+  overlay.querySelector('#save-driver').onclick=async()=>{
+    const name=overlay.querySelector('#f-name').value.trim();
+    if(!name){ alert('Enter a driver name'); return; }
+    const btn=overlay.querySelector('#save-driver'); btn.textContent='Saving…'; btn.disabled=true;
+    const payload={
+      name,
+      unit: overlay.querySelector('#f-unit').value.trim() || null,
+      phone: overlay.querySelector('#f-phone').value.trim() || null,
+      truck_num: overlay.querySelector('#f-truck').value.trim() || null,
+      cdl_url: cdlUrl, truck_photo_url: truckUrl, off:false
+    };
+    try{
+      const res=await api('drivers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(res.error) throw new Error(res.error);
+    }catch(e){ alert('Could not save driver: '+e.message); btn.textContent='Save driver'; btn.disabled=false; return; }
+    state.driverPanelOpen=false;
     await boot();
   };
-  return wrap;
+  return overlay;
 }
 
 const FIELDS=['loadNumber','poNumber','brokerName','brokerMc','brokerContact','carrierMc','carrierDot','truckNum','trailerNum',
@@ -138,7 +234,7 @@ const FIELDS=['loadNumber','poNumber','brokerName','brokerMc','brokerContact','c
 
 function renderRateConf(){
   const wrap=el(`<div><div class="topline"><div><h1>Rate Confirmations</h1>
-    <p style="color:var(--ink-soft);font-size:13.5px">Upload a PDF — reads scanned or text PDFs natively, no limitations</p></div></div>
+    <p>Upload a PDF — reads scanned or text PDFs natively</p></div></div>
     <div class="dropzone" id="drop"><div id="drop-label">${state.extracting?'<span class="spin"></span> Reading…':'Click to upload a rate confirmation PDF'}</div>
     <input type="file" accept="application/pdf" id="input" style="display:none"></div>
     <div id="result"></div></div>`);
@@ -156,19 +252,21 @@ function renderRateConf(){
   };
   if(state.extracted && !state.extracted.error){
     const ex=state.extracted;
-    const line=(l,v,m)=>`<div class="row"><b>${l}</b><span>${v||`<span class="missing">${m||'not found'}</span>`}</span></div>`;
+    const row=(l,v,m)=>`<div class="erow"><b>${l}</b><span>${v||`<span class="missing">${m||'not found'}</span>`}</span></div>`;
     const rc=wrap.querySelector('#result');
-    rc.appendChild(el(`<div class="extracted"><h3>${state.pdfName}</h3>
-      ${line('Load #',ex.loadNumber)}${line('PO #',ex.poNumber)}
-      ${line('Broker',ex.brokerName,'no broker name found')}${line('Broker MC',ex.brokerMc,'no MC found')}
-      ${line('Pickup',[ex.pickupCity,ex.pickupZip,fmtDate(ex.pickupDate),ex.pickupTime].filter(Boolean).join(' · '))}
-      ${line('Delivery',[ex.deliveryCity,ex.deliveryZip,fmtDate(ex.deliveryDate),ex.deliveryTime].filter(Boolean).join(' · '))}
-      ${line('Rate',ex.ratePay)}${line('Notes',ex.notesOrPenalties)}
-      <div class="field" style="margin-top:14px"><label>Assign driver</label>
+    rc.appendChild(el(`<div class="extracted">
+      <div class="extracted-header"><h3>${state.pdfName}</h3><div class="rate">${ex.ratePay||'—'}</div></div>
+      ${row('Load #',ex.loadNumber)}${row('PO #',ex.poNumber)}
+      ${row('Broker',ex.brokerName,'no broker name found')}${row('Broker MC',ex.brokerMc,'no MC found')}
+      ${row('Carrier MC / DOT',[ex.carrierMc,ex.carrierDot].filter(Boolean).join(' / '))}
+      ${row('Truck / Trailer',[ex.truckNum,ex.trailerNum].filter(Boolean).join(' / '))}
+      ${row('Pickup',[ex.pickupCity,ex.pickupZip,fmtDate(ex.pickupDate),ex.pickupTime].filter(Boolean).join(' · '))}
+      ${row('Delivery',[ex.deliveryCity,ex.deliveryZip,fmtDate(ex.deliveryDate),ex.deliveryTime].filter(Boolean).join(' · '))}
+      ${row('Notes / penalties',ex.notesOrPenalties)}
+      <div class="field" style="margin-top:16px"><label>Assign driver</label>
       <select id="assign"><option value="">Select…</option>${state.drivers.map(d=>`<option value="${d.id}">${d.unit?d.unit+' · ':''}${d.name}</option>`).join('')}</select></div>
       <div id="shipper-rep"></div>
       <div style="margin-top:14px"><button class="btn" id="save">Save to load board</button></div></div>`));
-    // Shipper reputation lookup - the feature that needed your own API key
     if(ex.deliveryCity || ex.deliveryAddress){
       api('shipper-lookup',{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({name:'',address:[ex.deliveryAddress,ex.deliveryCity,ex.deliveryZip].filter(Boolean).join(', ')})
@@ -179,21 +277,26 @@ function renderRateConf(){
       }).catch(()=>{});
     }
     rc.querySelector('#save').onclick=async()=>{
+      const btn=rc.querySelector('#save'); btn.textContent='Saving…'; btn.disabled=true;
       let pdf_url=null;
-      if(state.pdfFile){
-        const base64=await fileToBase64(state.pdfFile);
-        const up=await api('upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:state.pdfName,base64,contentType:'application/pdf'})});
-        pdf_url=up.url;
-      }
-      const driver_id=rc.querySelector('#assign').value || null;
-      await api('loads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-        driver_id, load_number:ex.loadNumber, po_number:ex.poNumber, broker_name:ex.brokerName, broker_mc:ex.brokerMc,
-        broker_contact:ex.brokerContact, carrier_mc:ex.carrierMc, carrier_dot:ex.carrierDot, truck_num:ex.truckNum,
-        trailer_num:ex.trailerNum, driver_phone:ex.driverPhone, pickup_address:ex.pickupAddress, pickup_city:ex.pickupCity,
-        pickup_zip:ex.pickupZip, pickup_date:ex.pickupDate||null, pickup_time:ex.pickupTime, delivery_address:ex.deliveryAddress,
-        delivery_city:ex.deliveryCity, delivery_zip:ex.deliveryZip, delivery_date:ex.deliveryDate||null, delivery_time:ex.deliveryTime,
-        rate_pay:ex.ratePay, notes_or_penalties:ex.notesOrPenalties, pdf_url, filename:state.pdfName
-      })});
+      try{
+        if(state.pdfFile){
+          const base64=await fileToBase64(state.pdfFile);
+          const up=await api('upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:state.pdfName,base64,contentType:'application/pdf'})});
+          if(up.error) throw new Error(up.error);
+          pdf_url=up.url;
+        }
+        const driver_id=rc.querySelector('#assign').value || null;
+        const res=await api('loads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          driver_id, load_number:ex.loadNumber, po_number:ex.poNumber, broker_name:ex.brokerName, broker_mc:ex.brokerMc,
+          broker_contact:ex.brokerContact, carrier_mc:ex.carrierMc, carrier_dot:ex.carrierDot, truck_num:ex.truckNum,
+          trailer_num:ex.trailerNum, driver_phone:ex.driverPhone, pickup_address:ex.pickupAddress, pickup_city:ex.pickupCity,
+          pickup_zip:ex.pickupZip, pickup_date:ex.pickupDate||null, pickup_time:ex.pickupTime, delivery_address:ex.deliveryAddress,
+          delivery_city:ex.deliveryCity, delivery_zip:ex.deliveryZip, delivery_date:ex.deliveryDate||null, delivery_time:ex.deliveryTime,
+          rate_pay:ex.ratePay, notes_or_penalties:ex.notesOrPenalties, pdf_url, filename:state.pdfName
+        })});
+        if(res.error) throw new Error(res.error);
+      }catch(e){ alert('Could not save load: '+e.message); btn.textContent='Save to load board'; btn.disabled=false; return; }
       state.extracted=null; state.pdfFile=null; state.pdfName=null; state.view='board';
       await boot();
     };
@@ -203,21 +306,86 @@ function renderRateConf(){
   return wrap;
 }
 
+function loadCardHTML(l,d){
+  return `<div class="card load-card">
+    <div class="idcol"><div class="loadnum">${l.load_number||'No load #'}</div>
+      <div class="drv">${d?((d.unit?d.unit+' · ':'')+d.name):'Unassigned'}</div></div>
+    <div class="route-line">
+      <div class="route-pt"><b>${l.pickup_city||l.pickup_zip||'—'}</b><small>${fmtDate(l.pickup_date)||''} ${l.pickup_time||''}</small></div>
+      <div class="route-arrow">→</div>
+      <div class="route-pt"><b>${l.delivery_city||l.delivery_zip||'—'}</b><small>${fmtDate(l.delivery_date)||''} ${l.delivery_time||''}</small></div>
+    </div>
+    <div class="times-col">Rate <b>${l.rate_pay||'—'}</b></div>
+    <div class="broker-col">
+      <b>${l.broker_name||'No broker name'}</b><span>${l.broker_mc?('MC '+l.broker_mc):'No MC found'}</span>
+      ${l.pdf_url?`<a class="pdf-link" href="${l.pdf_url}" target="_blank">⬇ PDF</a>`:''}
+    </div>
+  </div>`;
+}
+
 function renderBoard(){
   const wrap=el(`<div><div class="topline"><div><h1>Load Board</h1></div></div><div class="stack" id="list"></div></div>`);
   const list=wrap.querySelector('#list');
   if(state.loads.length===0){ list.appendChild(el(`<div class="empty">No loads yet.</div>`)); return wrap; }
   [...state.loads].sort((a,b)=>(a.pickup_date||'9999').localeCompare(b.pickup_date||'9999')).forEach(l=>{
     const d=state.drivers.find(x=>x.id===l.driver_id);
-    list.appendChild(el(`<div class="card load-card">
-      <div><div style="font-weight:800">${l.load_number||'No load #'}</div><div style="color:var(--ink-soft);font-size:12.5px">${d?((d.unit?d.unit+' · ':'')+d.name):'Unassigned'}</div></div>
-      <div><b>${l.pickup_city||'—'}</b> → <b>${l.delivery_city||'—'}</b></div>
-      <div style="font-size:12.5px;color:var(--ink-soft)">Pickup ${fmtDate(l.pickup_date)||'—'} ${l.pickup_time||''}<br>Delivery ${fmtDate(l.delivery_date)||'—'} ${l.delivery_time||''}</div>
-      <div style="font-size:12.5px"><b>${l.broker_name||'No broker name'}</b><br>${l.broker_mc?('MC '+l.broker_mc):'No MC found'}</div>
-      ${l.pdf_url?`<a class="pdf-link" href="${l.pdf_url}" target="_blank">⬇ PDF</a>`:''}
-    </div>`));
+    list.appendChild(el(loadCardHTML(l,d)));
   });
   return wrap;
+}
+
+function renderBilling(){
+  const wrap=el(`<div><div class="topline"><div><h1>Billing</h1><p>Every load ever uploaded, searchable by truck and date</p></div></div>
+    <div class="filters">
+      <input class="search" id="bill-search" placeholder="Search truck # or name…" value="${state.billSearch}">
+      <span class="chip ${state.billFilter==='week'?'active':''}" data-f="week">This week</span>
+      <span class="chip ${state.billFilter==='month'?'active':''}" data-f="month">This month</span>
+      <span class="chip ${state.billFilter==='20d'?'active':''}" data-f="20d">Last 20 days</span>
+      <span class="chip ${state.billFilter==='all'?'active':''}" data-f="all">All time</span>
+      <span class="chip ${state.billFilter==='custom'?'active':''}" data-f="custom">Custom</span>
+      ${state.billFilter==='custom'?`<input type="date" class="search" id="bill-from" value="${state.billFrom}"><input type="date" class="search" id="bill-to" value="${state.billTo}">`:''}
+    </div><div id="bill-groups"></div></div>`);
+  wrap.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{state.billFilter=c.dataset.f; render();});
+  wrap.querySelector('#bill-search').oninput=(e)=>{state.billSearch=e.target.value; renderBillGroups(wrap);};
+  if(state.billFilter==='custom'){
+    wrap.querySelector('#bill-from').onchange=e=>{state.billFrom=e.target.value; renderBillGroups(wrap);};
+    wrap.querySelector('#bill-to').onchange=e=>{state.billTo=e.target.value; renderBillGroups(wrap);};
+  }
+  renderBillGroups(wrap);
+  return wrap;
+}
+
+function billRange(){
+  const t=new Date(); const s2=d=>d.toLocaleDateString('en-CA');
+  if(state.billFilter==='week'){ const s=new Date(t); s.setDate(t.getDate()-t.getDay()); return [s2(s),s2(t)]; }
+  if(state.billFilter==='month'){ const s=new Date(t.getFullYear(),t.getMonth(),1); return [s2(s),s2(t)]; }
+  if(state.billFilter==='20d'){ const s=new Date(t); s.setDate(t.getDate()-20); return [s2(s),s2(t)]; }
+  if(state.billFilter==='custom'){ return [state.billFrom||'0000-00-00', state.billTo||'9999-99-99']; }
+  return ['0000-00-00','9999-99-99'];
+}
+
+function renderBillGroups(wrap){
+  const box=wrap.querySelector('#bill-groups'); box.innerHTML='';
+  const [from,to]=billRange(); const q=state.billSearch.trim().toLowerCase();
+  let loads=state.loads.filter(l=>{
+    if(state.billFilter!=='all' && l.pickup_date && !(l.pickup_date>=from && l.pickup_date<=to)) return false;
+    return true;
+  });
+  if(q){ loads=loads.filter(l=>{
+    const d=state.drivers.find(x=>x.id===l.driver_id);
+    return [d?.unit,d?.name,l.truck_num].filter(Boolean).join(' ').toLowerCase().includes(q);
+  }); }
+  if(loads.length===0){ box.appendChild(el(`<div class="empty">No loads match that search or range.</div>`)); return; }
+  const byDriver={};
+  loads.forEach(l=>{ const k=l.driver_id||'unassigned'; (byDriver[k]=byDriver[k]||[]).push(l); });
+  Object.entries(byDriver).forEach(([id,ls])=>{
+    const d=state.drivers.find(x=>x.id===id);
+    const label=d?(d.unit?d.unit+' · ':'')+d.name:'Unassigned loads';
+    const g=el(`<div class="group" style="margin-bottom:20px"><h4>${label} — ${ls.length} load${ls.length>1?'s':''}</h4><div class="stack"></div></div>`);
+    const st=g.querySelector('.stack');
+    ls.forEach(l=>st.appendChild(el(loadCardHTML(l,d))));
+    box.appendChild(g);
+  });
 }
 
 boot();
