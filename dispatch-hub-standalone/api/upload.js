@@ -7,7 +7,8 @@ module.exports = async (req, res) => {
     if (!filename || !base64) return res.status(400).json({ error: "filename and base64 are required" });
 
     const buffer = Buffer.from(base64, "base64");
-    const path = `${Date.now()}-${filename}`.replace(/\s+/g, "_");
+    const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `${Date.now()}-${safeName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("rateconfs")
