@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dispatch Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#F4F6F9; --surface:#FFFFFF; --border:#E6E9EE;
+  --ink:#171F2B; --ink-soft:#6B7684; --ink-faint:#9AA3B0;
+  --navy:#1E3A5F; --navy-dark:#12263F; --navy-tint:#EAF1F8;
+  --amber:#B4650A; --amber-bg:#FCF1E0;
+  --green:#15803D; --green-bg:#E8F5EC;
+  --red:#B42318; --red-bg:#FCEAEA;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+h1,h2,h3{margin:0;font-weight:800}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit;background:#fff;color:var(--ink)}
+nav{display:flex;align-items:center;gap:4px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;overflow-x:auto}
+nav .brand{font-size:16.5px;font-weight:800;color:var(--navy-dark);margin-right:18px;white-space:nowrap}
+nav .brand span{color:#6C93B8}
+nav button{display:flex;gap:7px;white-space:nowrap;background:none;border:none;color:var(--ink-soft);padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600}
+nav button.active{background:var(--navy-tint);color:var(--navy-dark)}
+main{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+.topline{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;gap:12px;flex-wrap:wrap}
+.btn{background:var(--navy);color:#fff;border:none;padding:10px 17px;border-radius:9px;font-size:13.5px;font-weight:700}
+.btn.ghost{background:none;border:1px solid var(--border);color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.driver-card{display:flex;align-items:center;gap:12px;padding:13px 15px}
+.avatar{width:44px;height:44px;border-radius:50%;flex:0 0 44px;background:var(--navy-tint);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--navy)}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:6px;cursor:pointer}
+.tag.assigned{background:var(--amber-bg);color:var(--amber)}
+.tag.available{background:var(--green-bg);color:var(--green)}
+.tag.off{background:var(--red-bg);color:var(--red)}
+.dropzone{border:2px dashed #C9D2DD;border-radius:14px;padding:44px 20px;text-align:center;background:var(--surface);cursor:pointer}
+.extracted{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:18px}
+.extracted .row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #F0F2F5;font-size:13.5px}
+.extracted .row b{color:var(--ink-soft);font-weight:600}
+.missing{color:var(--ink-faint);font-style:italic}
+.note{background:var(--amber-bg);color:var(--amber);border-radius:9px;padding:10px 12px;font-size:12.5px;margin-top:10px}
+.load-card{padding:15px 17px;display:grid;grid-template-columns:1.1fr 1.4fr 1.1fr 1fr auto;gap:14px;align-items:center}
+.stack{display:flex;flex-direction:column;gap:10px}
+.empty{color:var(--ink-soft);padding:50px 0;text-align:center}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:5px}
+.field input{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-size:14px}
+.spin{width:16px;height:16px;border:2px solid #C7D4E3;border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;vertical-align:-3px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.pdf-link{font-size:12px;font-weight:700;color:var(--navy);text-decoration:none}
+@media(max-width:760px){ main{padding:18px 14px 50px} .load-card{grid-template-columns:1fr 1fr;row-gap:10px} .grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const state = { view:'drivers', drivers:[], loads:[], extracting:false, extracted:null, pdfFile:null, pdfName:null };
+function el(h){ const d=document.createElement('div'); d.innerHTML=h.trim(); return d.firstChild; }
+function fmtDate(iso){ return iso ? String(iso).replace(/^\d{4}-/,'') : iso; }
+function todayStr(){ return new Date().toLocaleDateString('en-CA'); }
+function initials(n){ return (n||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
+async function api(path, opts){ const r = await fetch('/api/'+path, opts); return r.json(); }
+function fileToBase64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file); }); }
+
+async function boot(){
+  const d = await api('drivers'); state.drivers = d.drivers || [];
+  const l = await api('loads'); state.loads = l.loads || [];
+  render();
+}
+
+function activeLoadFor(id){
+  const t = todayStr();
+  return state.loads.find(l=>{
+    if(l.driver_id!==id) return false;
+    if(!l.pickup_date) return true;
+    const end = l.delivery_date || l.pickup_date;
+    return l.pickup_date<=t && t<=end;
+  });
+}
+function driverStatus(d){
+  if(d.off) return {label:'Off duty',cls:'off'};
+  if(activeLoadFor(d.id)) return {label:'Has a load',cls:'assigned'};
+  return {label:'Needs a load',cls:'available'};
+}
+
+function render(){
+  const app=document.getElementById('app'); app.innerHTML='';
+  const items=[['drivers','👤','Drivers'],['rateconf','📄','Rate Conf.'],['board','🚚','Load Board']];
+  app.appendChild(el(`<div>
+    <nav><div class="brand">Dispatch<span>Hub</span></div>
+    ${items.map(([v,ic,l])=>`<button data-v="${v}" class="${state.view===v?'active':''}">${ic} ${l}</button>`).join('')}
+    </nav><main id="main"></main></div>`));
+  document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{state.view=b.dataset.v; render();});
+  const main=document.getElementById('main');
+  if(state.view==='drivers') main.appendChild(renderDrivers());
+  if(state.view==='rateconf') main.appendChild(renderRateConf());
+  if(state.view==='board') main.appendChild(renderBoard());
+}
+
+function renderDrivers(){
+  const wrap=el(`<div><div class="topline"><div><h1>Drivers</h1></div>
+    <button class="btn" id="add-driver">+ New Driver</button></div>
+    <div class="grid" id="grid"></div></div>`);
+  const grid=wrap.querySelector('#grid');
+  const sorted=[...state.drivers].sort((a,b)=>(a.off?1:(activeLoadFor(a.id)?2:0))-(b.off?1:(activeLoadFor(b.id)?2:0)));
+  sorted.forEach(d=>{
+    const st=driverStatus(d);
+    grid.appendChild(el(`<div class="card driver-card" data-id="${d.id}">
+      <div class="avatar">${initials(d.name)}</div>
+      <div><h3>${d.unit?d.unit+' · ':''}${d.name||'Unnamed'}</h3>
+      <div style="color:var(--ink-soft);font-size:12.5px">${d.phone||'—'} · Truck ${d.truck_num||'—'}</div>
+      <span class="tag ${st.cls}" style="cursor:pointer">${st.label}</span></div></div>`));
+  });
+  grid.querySelectorAll('.tag').forEach(tag=>tag.onclick=async(e)=>{
+    const id=tag.closest('[data-id]').dataset.id;
+    const d=state.drivers.find(x=>x.id===id);
+    await api('drivers',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,off:!d.off})});
+    await boot();
+  });
+  wrap.querySelector('#add-driver').onclick=async()=>{
+    const name=prompt('Driver name:'); if(!name) return;
+    const phone=prompt('Phone:')||''; const truck_num=prompt('Truck #:')||''; const unit=prompt('Unit (e.g. T56):')||'';
+    await api('drivers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,truck_num,unit,off:false})});
+    await boot();
+  };
+  return wrap;
+}
+
+const FIELDS=['loadNumber','poNumber','brokerName','brokerMc','brokerContact','carrierMc','carrierDot','truckNum','trailerNum',
+  'driverPhone','pickupAddress','pickupCity','pickupZip','pickupDate','pickupTime','deliveryAddress','deliveryCity','deliveryZip',
+  'deliveryDate','deliveryTime','ratePay','notesOrPenalties'];
+
+function renderRateConf(){
+  const wrap=el(`<div><div class="topline"><div><h1>Rate Confirmations</h1>
+    <p style="color:var(--ink-soft);font-size:13.5px">Upload a PDF — reads scanned or text PDFs natively, no limitations</p></div></div>
+    <div class="dropzone" id="drop"><div id="drop-label">${state.extracting?'<span class="spin"></span> Reading…':'Click to upload a rate confirmation PDF'}</div>
+    <input type="file" accept="application/pdf" id="input" style="display:none"></div>
+    <div id="result"></div></div>`);
+  wrap.querySelector('#drop').onclick=()=>wrap.querySelector('#input').click();
+  wrap.querySelector('#input').onchange=async()=>{
+    const file=wrap.querySelector('#input').files[0]; if(!file) return;
+    state.extracting=true; state.pdfFile=file; state.pdfName=file.name; render();
+    try{
+      const base64=await fileToBase64(file);
+      const resp=await api('extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pdfBase64:base64,filename:file.name})});
+      if(resp.error) throw new Error(resp.error);
+      state.extracted=resp.fields;
+    }catch(e){ state.extracted={error:true,detail:e.message}; }
+    state.extracting=false; render();
+  };
+  if(state.extracted && !state.extracted.error){
+    const ex=state.extracted;
+    const line=(l,v,m)=>`<div class="row"><b>${l}</b><span>${v||`<span class="missing">${m||'not found'}</span>`}</span></div>`;
+    const rc=wrap.querySelector('#result');
+    rc.appendChild(el(`<div class="extracted"><h3>${state.pdfName}</h3>
+      ${line('Load #',ex.loadNumber)}${line('PO #',ex.poNumber)}
+      ${line('Broker',ex.brokerName,'no broker name found')}${line('Broker MC',ex.brokerMc,'no MC found')}
+      ${line('Pickup',[ex.pickupCity,ex.pickupZip,fmtDate(ex.pickupDate),ex.pickupTime].filter(Boolean).join(' · '))}
+      ${line('Delivery',[ex.deliveryCity,ex.deliveryZip,fmtDate(ex.deliveryDate),ex.deliveryTime].filter(Boolean).join(' · '))}
+      ${line('Rate',ex.ratePay)}${line('Notes',ex.notesOrPenalties)}
+      <div class="field" style="margin-top:14px"><label>Assign driver</label>
+      <select id="assign"><option value="">Select…</option>${state.drivers.map(d=>`<option value="${d.id}">${d.unit?d.unit+' · ':''}${d.name}</option>`).join('')}</select></div>
+      <div id="shipper-rep"></div>
+      <div style="margin-top:14px"><button class="btn" id="save">Save to load board</button></div></div>`));
+    // Shipper reputation lookup - the feature that needed your own API key
+    if(ex.deliveryCity || ex.deliveryAddress){
+      api('shipper-lookup',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name:'',address:[ex.deliveryAddress,ex.deliveryCity,ex.deliveryZip].filter(Boolean).join(', ')})
+      }).then(r=>{
+        const box=rc.querySelector('#shipper-rep');
+        if(r.found) box.appendChild(el(`<div class="note" style="background:var(--navy-tint);color:var(--navy-dark)">Shipper: ${r.name} — ${r.rating||'?'}★ (${r.ratingCount||0} reviews). ${r.summary||''}</div>`));
+        else if(r.unavailable) box.appendChild(el(`<div class="note">Shipper lookup not configured (missing GOOGLE_PLACES_API_KEY).</div>`));
+      }).catch(()=>{});
+    }
+    rc.querySelector('#save').onclick=async()=>{
+      let pdf_url=null;
+      if(state.pdfFile){
+        const base64=await fileToBase64(state.pdfFile);
+        const up=await api('upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:state.pdfName,base64,contentType:'application/pdf'})});
+        pdf_url=up.url;
+      }
+      const driver_id=rc.querySelector('#assign').value || null;
+      await api('loads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        driver_id, load_number:ex.loadNumber, po_number:ex.poNumber, broker_name:ex.brokerName, broker_mc:ex.brokerMc,
+        broker_contact:ex.brokerContact, carrier_mc:ex.carrierMc, carrier_dot:ex.carrierDot, truck_num:ex.truckNum,
+        trailer_num:ex.trailerNum, driver_phone:ex.driverPhone, pickup_address:ex.pickupAddress, pickup_city:ex.pickupCity,
+        pickup_zip:ex.pickupZip, pickup_date:ex.pickupDate||null, pickup_time:ex.pickupTime, delivery_address:ex.deliveryAddress,
+        delivery_city:ex.deliveryCity, delivery_zip:ex.deliveryZip, delivery_date:ex.deliveryDate||null, delivery_time:ex.deliveryTime,
+        rate_pay:ex.ratePay, notes_or_penalties:ex.notesOrPenalties, pdf_url, filename:state.pdfName
+      })});
+      state.extracted=null; state.pdfFile=null; state.pdfName=null; state.view='board';
+      await boot();
+    };
+  } else if(state.extracted && state.extracted.error){
+    wrap.querySelector('#result').appendChild(el(`<div class="note" style="background:var(--red-bg);color:var(--red)">Error: ${state.extracted.detail}</div>`));
+  }
+  return wrap;
+}
+
+function renderBoard(){
+  const wrap=el(`<div><div class="topline"><div><h1>Load Board</h1></div></div><div class="stack" id="list"></div></div>`);
+  const list=wrap.querySelector('#list');
+  if(state.loads.length===0){ list.appendChild(el(`<div class="empty">No loads yet.</div>`)); return wrap; }
+  [...state.loads].sort((a,b)=>(a.pickup_date||'9999').localeCompare(b.pickup_date||'9999')).forEach(l=>{
+    const d=state.drivers.find(x=>x.id===l.driver_id);
+    list.appendChild(el(`<div class="card load-card">
+      <div><div style="font-weight:800">${l.load_number||'No load #'}</div><div style="color:var(--ink-soft);font-size:12.5px">${d?((d.unit?d.unit+' · ':'')+d.name):'Unassigned'}</div></div>
+      <div><b>${l.pickup_city||'—'}</b> → <b>${l.delivery_city||'—'}</b></div>
+      <div style="font-size:12.5px;color:var(--ink-soft)">Pickup ${fmtDate(l.pickup_date)||'—'} ${l.pickup_time||''}<br>Delivery ${fmtDate(l.delivery_date)||'—'} ${l.delivery_time||''}</div>
+      <div style="font-size:12.5px"><b>${l.broker_name||'No broker name'}</b><br>${l.broker_mc?('MC '+l.broker_mc):'No MC found'}</div>
+      ${l.pdf_url?`<a class="pdf-link" href="${l.pdf_url}" target="_blank">⬇ PDF</a>`:''}
+    </div>`));
+  });
+  return wrap;
+}
+
+boot();
+</script>
+</body>
+</html>
